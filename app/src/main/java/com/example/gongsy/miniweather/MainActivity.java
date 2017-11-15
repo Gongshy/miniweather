@@ -2,6 +2,7 @@ package com.example.gongsy.miniweather;
 
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
@@ -18,6 +19,8 @@ import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.example.gongsy.bean.TodayWeather;
 import com.example.gongsy.util.NetUtil;
@@ -33,8 +36,37 @@ import org.xmlpull.v1.XmlPullParserFactory;
 public class MainActivity extends Activity implements View.OnClickListener{
     private static final int UPDATE_TODAY_WEATHER = 1;
     private ImageView mUpdateBtn;
+    private ImageView mCitySelect;
     private TextView cityTv, timeTv, humidityTv, weekTv, pmDataTv,pmQualityTv,temperatureTv, climateTv, windTv, city_name_Tv;
     private ImageView weatherImg, pmImg;
+    private int[] imagePm={R.drawable.biz_plugin_weather_0_50,R.drawable.biz_plugin_weather_51_100,
+            R.drawable.biz_plugin_weather_101_150,R.drawable.biz_plugin_weather_151_200,
+            R.drawable.biz_plugin_weather_201_300,R.drawable.biz_plugin_weather_201_300,
+            R.drawable.biz_plugin_weather_greater_300};
+    private Map<String,Integer> imageWeather=new HashMap<String,Integer>(){
+        {
+            put("暴雪",R.drawable.biz_plugin_weather_baoxue);
+            put("暴雨",R.drawable.biz_plugin_weather_baoyu);
+            put("大暴雨",R.drawable.biz_plugin_weather_dabaoyu);
+            put("大雪",R.drawable.biz_plugin_weather_daxue);
+            put("大雨",R.drawable.biz_plugin_weather_dayu);
+            put("多云",R.drawable.biz_plugin_weather_duoyun);
+            put("雷阵雨",R.drawable.biz_plugin_weather_leizhenyu);
+            put("雷阵雨冰雹",R.drawable.biz_plugin_weather_leizhenyubingbao);
+            put("晴",R.drawable.biz_plugin_weather_qing);
+            put("沙尘暴",R.drawable.biz_plugin_weather_shachenbao);
+            put("特大暴雨",R.drawable.biz_plugin_weather_tedabaoyu);
+            put("雾",R.drawable.biz_plugin_weather_wu);
+            put("小雪",R.drawable.biz_plugin_weather_xiaoxue);
+            put("小雨",R.drawable.biz_plugin_weather_xiaoyu);
+            put("阴",R.drawable.biz_plugin_weather_yin);
+            put("雨夹雪",R.drawable.biz_plugin_weather_yujiaxue);
+            put("阵雪",R.drawable.biz_plugin_weather_zhenxue);
+            put("阵雨",R.drawable.biz_plugin_weather_zhenyu);
+            put("中雪",R.drawable.biz_plugin_weather_zhongxue);
+            put("中雨",R.drawable.biz_plugin_weather_zhongyu);
+        }
+    };
     private Handler mHandler = new Handler() {
         public void handleMessage(android.os.Message msg) {
             switch (msg.what) {
@@ -60,10 +92,16 @@ public class MainActivity extends Activity implements View.OnClickListener{
             Log.d("myWeather","网络挂了");
             Toast.makeText(MainActivity.this,"网络挂了!",Toast.LENGTH_LONG).show();
         }
+        mCitySelect=(ImageView) findViewById(R.id.title_city_manager);
+        mCitySelect.setOnClickListener(this);
         initView();
     }
     @Override
     public void onClick(View view){
+        if(view.getId()==R.id.title_city_manager){
+            Intent i=new Intent(this,SelectCity.class);
+            startActivityForResult(i,1);
+        }
         if(view.getId()==R.id.title_update_btn){
             SharedPreferences sharedPreferences = getSharedPreferences("config", MODE_PRIVATE);
             String cityCode = sharedPreferences.getString("main_city_code","101010100");
@@ -77,7 +115,19 @@ public class MainActivity extends Activity implements View.OnClickListener{
             }
         }
     }
-
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 1 && resultCode == RESULT_OK) {
+            String newCityCode= data.getStringExtra("cityCode");
+            Log.d("myWeather", "选择的城市代码为"+newCityCode);
+            if (NetUtil.getNetworkState(this) != NetUtil.NETWORN_NONE) {
+                Log.d("myWeather", "网络OK");
+                queryWeatherCode(newCityCode);
+            } else {
+                Log.d("myWeather", "网络挂了");
+                Toast.makeText(MainActivity.this, "网络挂了！", Toast.LENGTH_LONG).show();
+            }
+        }
+    }
     void initView(){
         city_name_Tv = (TextView) findViewById(R.id.title_city_name);
         cityTv = (TextView) findViewById(R.id.city);
@@ -156,6 +206,11 @@ public class MainActivity extends Activity implements View.OnClickListener{
         temperatureTv.setText(todayWeather.getHigh()+"~"+todayWeather.getLow());
         climateTv.setText(todayWeather.getType());
         windTv.setText("风力:"+todayWeather.getFengli());
+        int i=Integer.valueOf(todayWeather.getPm25());
+        pmImg.setImageResource(imagePm[Math.min((i-1)/50,6)]);
+        int Index=R.drawable.biz_plugin_weather_qing;
+        Index=imageWeather.get(todayWeather.getType());
+        weatherImg.setImageResource(Index);
         Toast.makeText(MainActivity.this,"更新成功！",Toast.LENGTH_SHORT).show();
     }
 
