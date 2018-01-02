@@ -1,5 +1,8 @@
 package com.example.gongsy.bean;
 
+import java.util.AbstractSequentialList;
+import java.util.ArrayList;
+
 /**
  * Created by Gongsy on 2017/10/16.
  */
@@ -11,12 +14,12 @@ public class TodayWeather {
     private String shidu;
     private String pm25;
     private String quality;
-    private String fengxiang;
-    private String fengli;
-    private String date;
-    private String high;
-    private String low;
-    private String type;
+    private ArrayList<String> fengxiang=new ArrayList<String>();
+    private ArrayList<String> fengli=new ArrayList<String>();
+    private ArrayList<String> date=new ArrayList<String>();
+    private ArrayList<String> high=new ArrayList<String>();
+    private ArrayList<String> low=new ArrayList<String>();
+    private ArrayList<String> type=new ArrayList<String>();
 
     public String getCity() {
         return city;
@@ -66,51 +69,51 @@ public class TodayWeather {
         this.quality = quality;
     }
 
-    public String getFengxiang() {
+    public ArrayList<String> getFengxiang() {
         return fengxiang;
     }
 
-    public void setFengxiang(String fengxiang) {
+    public void setFengxiang(ArrayList<String> fengxiang) {
         this.fengxiang = fengxiang;
     }
 
-    public String getFengli() {
+    public ArrayList<String> getFengli() {
         return fengli;
     }
 
-    public void setFengli(String fengli) {
+    public void setFengli(ArrayList<String> fengli) {
         this.fengli = fengli;
     }
 
-    public String getDate() {
+    public ArrayList<String> getDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate(ArrayList<String> date) {
         this.date = date;
     }
 
-    public String getHigh() {
+    public ArrayList<String> getHigh() {
         return high;
     }
 
-    public void setHigh(String high) {
+    public void setHigh(ArrayList<String> high) {
         this.high = high;
     }
 
-    public String getLow() {
+    public ArrayList<String> getLow() {
         return low;
     }
 
-    public void setLow(String low) {
+    public void setLow(ArrayList<String> low) {
         this.low = low;
     }
 
-    public String getType() {
+    public ArrayList<String> getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(ArrayList<String> type) {
         this.type = type;
     }
 
